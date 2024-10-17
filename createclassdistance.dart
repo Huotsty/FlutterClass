@@ -32,6 +32,7 @@ class Distance {
         return _distance / 100;
     }
   }
+
   double toKilometers() {
   return _convertToMeters() / 1000;
   }
@@ -50,10 +51,9 @@ class Distance {
   }
 }
 void main() {
-  Distance d1 = Distance.kms(5);  // 5 kilometers
+  Distance d1 = Distance.kms(5);  
   Distance d2 = Distance.ms(500); 
-   Distance d3 = Distance.cms(500);// 500 meters
-  Distance sum = d1 + d2 + d3;
+  Distance sum = d1 + d2;
   print('Sum: $sum');
   print('sum:  ${sum.toKilometers()} kms');
   print('sum: ${sum.toCentimeters()} cms');
