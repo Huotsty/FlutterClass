@@ -72,18 +72,22 @@ enum Sports{
 }
 class House {
 
-  List<Window> windows;
-  int room;
-  List <Door> doors;
-  Garden garden;
-  Chimney chimney;
+  // List<Window> windows;
+  // int room;
+  // List <Door> doors;
+  // Garden garden;
+  // Chimney chimney;
 
   final String Housecolor = 'yellow'; 
   final int floor;
   final double width;
   final double length;
   final HouseType type;
-  House({this.type= HouseType.simple, required this.width, required this.length, required this.floor});
+
+  House(this.floor, this.width, this.length, this.type);
+
+  
+  // House({this.type= HouseType.simple, required this.width, required this.length, required this.floor});
  @override
   String toString() {
     return 'House Color: $Housecolor, There are  $floor, The width: $width, The length: $length, HouseType $type';
@@ -91,6 +95,6 @@ class House {
 }
 
 void main(){
-  House house = House( width: 10, length: 15, floor: 4);
-  print(house.toString());
+  // House house = House( width: 10, length: 15, floor: 4);
+  // print(house.toString());
 }
