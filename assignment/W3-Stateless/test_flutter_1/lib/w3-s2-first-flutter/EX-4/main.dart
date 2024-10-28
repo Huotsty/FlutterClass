@@ -1,32 +1,5 @@
 import 'package:flutter/material.dart';
-class GradiantButton extends StatelessWidget {
-  final String text;
-  final Color startColor;
-  final Color endColor;
-  const GradiantButton({super.key,required this.text, required this.startColor, required this.endColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-              margin: const EdgeInsets.all(10),
-              padding: const EdgeInsets.all(30),
-              decoration: BoxDecoration(
-                borderRadius:  BorderRadius.circular(35),
-              gradient:  LinearGradient(colors: [
-                startColor,
-                endColor,
-              ])
-              ),
-              child:  Text(
-                text,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 35,
-                    decoration: TextDecoration.none),
-              ),
-            );
-  }
-}
+import 'package:test_flutter_1/w3-s2-first-flutter/EX-4/gradiantstateless1.dart';
 
 void main() {
   runApp(
@@ -38,7 +11,7 @@ void main() {
             GradiantButton(text: 'C', startColor: Colors.red, endColor: Colors.blue),
             GradiantButton(text: 'A', startColor: Colors.green, endColor: Colors.yellow),
             GradiantButton(text: 'D', startColor: Colors.purple, endColor: Colors.pink),
-            GradiantButton(text: 'T', startColor: Colors.orange, endColor: Colors.brown),
+            GradiantButton(text: 'T', startColor: Color.fromARGB(255, 130, 94, 40), endColor: Colors.brown),
           ],
         ),
       ),
