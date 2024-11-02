@@ -3,7 +3,16 @@ void main() {
   runApp(const MyApp());
 }
 enum ButtonType {
-  
+  primary,
+  secondary,
+  disabled,
+}
+class Button {
+  final ButtonType type;
+  final IconData icon;
+  final String label;
+
+  Button({required this.type, required this.icon, required this.label});
 }
 const Color primaryColor = Colors.blue;
 const Color secondaryColor = Colors.green;
