@@ -1,5 +1,4 @@
-  import 'package:flutter/material.dart';
-  
+import 'package:flutter/material.dart';
 
 List<String> images = [
   "assets/w4-s2/bird.jpg",
@@ -10,7 +9,8 @@ List<String> images = [
 ];
 
 void main() => runApp(const MaterialApp(
-      debugShowCheckedModeBanner: false, // Why this line ? Can you explain it ?
+      debugShowCheckedModeBanner:
+          false, // Why this line ? Can you explain it ? the debug check mode banner dissapear
       home: ImageViewer(),
     ));
 
@@ -23,24 +23,26 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> {
   int _index = 0;
+  @override
+  void initState() {
+    super.initState();
+    _index = 0;
+  }
+
   void _incrementIndex() {
     setState(() {
-      if(_index < images.length) {
-      _index++;}
-      else {
-        _index = 0;
-      }
+      // _index = (_index + 1) % images.length;
+      _index = (_index - 1 + images.length) % images.length;
     });
   }
 
   void _decrementIndex() {
     setState(() {
-      if(_index < images.length) {
-      _index--;}else{
-        
-      }
+      // _index = (_index - 1 + images.length) % images.length;
+      _index = (_index + 1) % images.length;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,4 +70,3 @@ class _ImageViewerState extends State<ImageViewer> {
     );
   }
 }
-
