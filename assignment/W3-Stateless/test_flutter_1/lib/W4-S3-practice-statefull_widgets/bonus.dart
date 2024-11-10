@@ -43,7 +43,7 @@ class ScoreCard extends StatefulWidget {
 }
 
 class _ScoreCardState extends State<ScoreCard> {
-  int score = 1; // Start with a minimum score of 1
+  int score = 1; 
 
   void incrementScore() {
     if (score < 10) {
@@ -71,7 +71,7 @@ class _ScoreCardState extends State<ScoreCard> {
     } else if (score <= 8) {
       return Colors.green;
     } else {
-      return Colors.green[800]!;
+      return const Color.fromARGB(255, 28, 120, 31);
     }
   }
 

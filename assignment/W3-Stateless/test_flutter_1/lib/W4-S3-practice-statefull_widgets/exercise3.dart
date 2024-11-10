@@ -23,12 +23,7 @@ class ImageViewer extends StatefulWidget {
 
 class _ImageViewerState extends State<ImageViewer> {
   int _index = 0;
-  @override
-  void initState() {
-    super.initState();
-    _index = 0;
-  }
-
+ 
   void _incrementIndex() {
     setState(() {
       // _index = (_index + 1) % images.length;
