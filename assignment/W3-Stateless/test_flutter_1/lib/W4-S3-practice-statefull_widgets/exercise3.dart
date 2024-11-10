@@ -24,19 +24,46 @@ class ImageViewer extends StatefulWidget {
 class _ImageViewerState extends State<ImageViewer> {
   int _index = 0;
  
-  void _incrementIndex() {
-    setState(() {
-      // _index = (_index + 1) % images.length;
-      _index = (_index - 1 + images.length) % images.length;
-    });
-  }
+//   void _incrementIndex() {
+//   setState(() {
+//     if (_index >= images.length - 1) {
+//       _index = 0; 
+//     } else {
+//       _index ++; 
+//     }
+//   });
+// }
+
+// void _decrementIndex() {
+//   setState(() {
+//     if (_index <= 0) {
+//       _index = images.length - 1; 
+//     } else {
+//       _index --; 
+//     }
+//   });
+// }
 
   void _decrementIndex() {
-    setState(() {
-      // _index = (_index - 1 + images.length) % images.length;
-      _index = (_index + 1) % images.length;
-    });
-  }
+  setState(() {
+    if (_index >= images.length - 1) {
+      _index = 0; 
+    } else {
+      _index ++; 
+    }
+  });
+}
+
+void _incrementIndex() {
+  setState(() {
+    if (_index <= 0) {
+      _index = images.length - 1; 
+    } else {
+      _index --; 
+    }
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +79,7 @@ class _ImageViewerState extends State<ImageViewer> {
             onPressed: _incrementIndex,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 50, 0),
+            padding: const EdgeInsets.only(right: 50),
             child: IconButton(
               icon: const Icon(Icons.navigate_next),
               tooltip: 'Go to the next image',
@@ -61,7 +88,8 @@ class _ImageViewerState extends State<ImageViewer> {
           ),
         ],
       ),
-      body: Image.asset(images[_index]),
+      body: 
+          Image.asset(images[_index]),
     );
   }
 }
