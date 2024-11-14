@@ -4,14 +4,15 @@ import '../EXERCISE-2/model/profile_tile_model.dart';
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: ProfileApp(),
+    home:  ProfileApp()
   ));
 }
 
 const Color mainColor = Color(0xff5E9FCD);
 
 class ProfileApp extends StatelessWidget {
-  const ProfileApp({super.key});
+  // final ProfileData profileData;
+   const ProfileApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,46 +26,47 @@ class ProfileApp extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: 40),
-            CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage(
-                  'assets/w5-s2/aang.png'), 
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Ronan OGOR',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: mainColor,
+      body: Center( child: ListView.builder(
+        itemCount: users.length,
+        itemBuilder: (context, index){
+          final user = users[index];
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 40),
+              CircleAvatar(
+                radius: 60,
+                backgroundImage: user.avatarUrl != null
+                    ? AssetImage(user.avatarUrl!)
+                    : null,),
+              const SizedBox(height: 20),
+              Text(
+                user.name,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: mainColor,
+                ),
               ),
-            ),
-            Text(
-              'Flutter Developer',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
+              Text(
+                user.position,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
               ),
-            ),
-            SizedBox(height: 20),
-            ProfileTile(
-              icon: Icons.phone,
-              title: "Phone Number",
-              data: "+123 456 7890",
-            ),
-             ProfileTile(
-              icon: Icons.location_on,
-              title: "Address",
-              data: "Cambodia",
-            ),
-          ],
+              const SizedBox(height: 20),
+              ...user.tiles.map((tile) => ProfileTile(
+                icon: tile.icon,
+                title: tile.title,
+                data: tile.value,
+              )),
+              const SizedBox(height: 40),
+            ],
+          );
+        },
         ),
-      ),
+      )
     );
   }
 }

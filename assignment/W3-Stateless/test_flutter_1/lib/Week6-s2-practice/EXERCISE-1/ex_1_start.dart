@@ -14,7 +14,7 @@ void main() {
             for (var i = 0; i < colors.length; i++) Text(colors[i]),
             const Label("Method 2: Map", bold: true),
             ...colors.map((item) => Text(item)),
-            const Label("Method 23: Dedicated Function", bold: true),
+            const Label("Method 3: Dedicated Function", bold: true),
             ...getLabels(),
           ],
         ),

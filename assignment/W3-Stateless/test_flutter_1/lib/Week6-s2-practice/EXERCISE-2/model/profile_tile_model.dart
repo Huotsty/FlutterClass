@@ -1,13 +1,13 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ProfileData {
   final String name;
   final String position;
-  final String avatarUrl;
+  final String? avatarUrl;
   final List<TileData> tiles;
 
   ProfileData(
-      {required this.name, required this.position, required this.tiles, required this.avatarUrl});
+      {required this.name, required this.position, this.avatarUrl, required this.tiles});
 }
 
 class TileData {
