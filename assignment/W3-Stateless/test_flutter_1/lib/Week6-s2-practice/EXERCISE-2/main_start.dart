@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../EXERCISE-2/data/profile_data.dart';
-import '../EXERCISE-2/model/profile_tile_model.dart';
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
