@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-
 import '../models/expense.dart';
-import 'expenses_list.dart';
+import '../widgets/expenses_list.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -27,6 +26,12 @@ class _ExpensesState extends State<Expenses> {
       date: DateTime.now(),
       category: Category.leisure,
     ),
+    Expense(
+      title: 'Cinema',
+      amount: 15.69,
+      date: DateTime.now(),
+      category: Category.leisure,
+    ),
   ];
 
   @override
@@ -35,7 +40,7 @@ class _ExpensesState extends State<Expenses> {
       backgroundColor: Colors.blue[100],
       appBar: AppBar(
         backgroundColor: Colors.blue[700],
-        title: const Text('Ronan-The-Best Expenses App'),
+        title: const Text(' Expenses App'),
       ),
       body: ExpensesList(expenses: _registeredExpenses),
     );
