@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/expense.dart';
+import '../widgets/add_expense_form.dart';
 import '../widgets/expenses_list.dart';
 
 class Expenses extends StatefulWidget {
@@ -34,6 +35,34 @@ class _ExpensesState extends State<Expenses> {
     ),
   ];
 
+   // Method to add a new expense
+  void _addExpense(String title, double amount, DateTime date, Category category) {
+    final newExpense = Expense(
+      title: title,
+      amount: amount,
+      date: date,
+      category: category,
+    );
+
+    setState(() {
+      _registeredExpenses.add(newExpense);
+    });
+  }
+
+  // Method to open the modal
+  void _openAddExpenseModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return GestureDetector(
+          onTap: () {},
+          behavior: HitTestBehavior.opaque,
+          child: AddExpenseForm(onAddExpense: _addExpense),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,9 +71,8 @@ class _ExpensesState extends State<Expenses> {
         actions:  [
           IconButton(
               icon: const Icon(Icons.add),
-              onPressed: () {
-                
-              }),
+              onPressed: () => _openAddExpenseModal(context),
+              ),
         ],
         backgroundColor: Colors.blue[700],
         title: const Text(' Expenses App'),
@@ -54,7 +82,5 @@ class _ExpensesState extends State<Expenses> {
   }
 }
 
-class AddExpense {
-  // Add expense logic here
 
-}
+
