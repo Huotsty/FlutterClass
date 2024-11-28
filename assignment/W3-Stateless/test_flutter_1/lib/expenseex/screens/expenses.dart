@@ -39,10 +39,22 @@ class _ExpensesState extends State<Expenses> {
     return Scaffold(
       backgroundColor: Colors.blue[100],
       appBar: AppBar(
+        actions:  [
+          IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                
+              }),
+        ],
         backgroundColor: Colors.blue[700],
         title: const Text(' Expenses App'),
       ),
       body: ExpensesList(expenses: _registeredExpenses),
     );
   }
+}
+
+class AddExpense {
+  // Add expense logic here
+
 }
