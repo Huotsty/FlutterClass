@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import '../../models/expense.dart';
 
 class ExpenseForm extends StatefulWidget {
@@ -15,55 +14,51 @@ class ExpenseForm extends StatefulWidget {
 class _ExpenseFormState extends State<ExpenseForm> {
   final _titleController = TextEditingController();
   final _valueController = TextEditingController();
-  Category _selectedCategory = Category.leisure;
-  String get title => _titleController.text;
-  DateTime? selectedDate;
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2024),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != selectedDate) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
+  String get title => _titleController.text;
 
   @override
   void dispose() {
     _titleController.dispose();
     _valueController.dispose();
-
     super.dispose();
   }
 
   void onCancel() {
+    
     // Close modal
     Navigator.pop(context);
   }
 
   void onAdd() {
+
+    
     // 1- Get the values from inputs
     String title = _titleController.text;
-    double amount = double.parse(_valueController.text);
-
+    double? amount = double.tryParse(_valueController.text);
+    
+  bool isTitileValid = title.trim().isNotEmpty;
+  bool isAmountValid = amount!= null && amount > 0;
+  //amount
+  // all
     // 2- Create the expense
     Expense expense = Expense(
         title: title,
         amount: amount,
-        date: selectedDate!,
-        category: _selectedCategory);
+        date: DateTime.now(),     //  TODO :  For now it s a fake data
+        category: Category.food); //  TODO :  For now it s a fake data
 
     // 3- Ask the parent to add the expense
     widget.onCreated(expense);
 
     // 4- Close modal
     Navigator.pop(context);
+  
   }
 
+
+
+  
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -90,33 +85,6 @@ class _ExpenseFormState extends State<ExpenseForm> {
               label: Text('Amount'),
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Text(
-                selectedDate == null
-                    ? "Not selected"
-                    : "${selectedDate!.toLocal()}".split(" ")[0],
-              ),
-              IconButton(
-                  onPressed: _selectDate,
-                  icon: const Icon(Icons.calendar_month))
-            ],
-          ),
-          DropdownButton<Category>(
-            value: _selectedCategory,
-            items: Category.values.map((category) {
-              return DropdownMenuItem(
-                value: category,
-                child: Text(category.name),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedCategory = value!;
-              });
-            },
-          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -125,7 +93,9 @@ class _ExpenseFormState extends State<ExpenseForm> {
                 width: 20,
               ),
               ElevatedButton(
-                  onPressed: onAdd, child: const Text('Save Expense')),
+                
+                onPressed: onAdd, child: const Text('Create')
+                ),
             ],
           )
         ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+ 
 import '../../models/expense.dart';
 import 'expenses_form.dart';
 import 'expenses_list.dart';
@@ -26,28 +26,25 @@ class _ExpensesState extends State<Expenses> {
       amount: 15.69,
       date: DateTime.now(),
       category: Category.leisure,
+    ), Expense(
+      title: 'Flutter Course',
+      amount: 19.99,
+      date: DateTime.now(),
+      category: Category.travel,
+    ),
+    Expense(
+      title: 'Cinema',
+      amount: 15.69,
+      date: DateTime.now(),
+      category: Category.food,
     ),
   ];
 
+
   void onExpenseRemoved(Expense expense) {
-    final expenseIndex = _registeredExpenses.indexOf(expense);
     setState(() {
       _registeredExpenses.remove(expense);
     });
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('$_registeredExpenses Expenses deleted'),
-      action: SnackBarAction(
-        label: "Undo",
-        onPressed: () {
-          setState(() {
-            // _registeredExpenses.add(expense);
-            _registeredExpenses.insert(
-                expenseIndex, expense); // Reinsert at the same position
-          });
-        },
-      ),
-      duration: const Duration(seconds: 3),
-    ));
   }
 
   void onExpenseCreated(Expense newExpense) {
@@ -55,14 +52,13 @@ class _ExpensesState extends State<Expenses> {
       _registeredExpenses.add(newExpense);
     });
   }
+ 
 
   void onAddPressed() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => ExpenseForm(
-        onCreated: onExpenseCreated,
-      ),
+      builder: (ctx) => ExpenseForm(onCreated: onExpenseCreated,),
     );
   }
 
@@ -80,10 +76,7 @@ class _ExpensesState extends State<Expenses> {
         backgroundColor: Colors.blue[700],
         title: const Text('Ronan-The-Best Expenses App'),
       ),
-      body: ExpensesList(
-        expenses: _registeredExpenses,
-        onExpenseRemoved: onExpenseRemoved,
-      ),
+      body: ExpensesList(expenses: _registeredExpenses, onExpenseRemoved: onExpenseRemoved,),
     );
   }
 }
