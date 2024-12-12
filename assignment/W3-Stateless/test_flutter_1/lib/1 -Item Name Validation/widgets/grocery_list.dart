@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
+
 import '../data/dummy_items.dart';
 import '../models/grocery_item.dart';
 import 'new_item.dart';
- 
+
+enum FormMode {
+  editing('Edit item', 'Edit'),
+  adding('Add new item', 'Add');
+
+  final String label;
+  final String btnText;
+  const FormMode(this.label, this.btnText);
+}
+
 class GroceryList extends StatefulWidget {
   const GroceryList({super.key});
 
@@ -11,18 +21,26 @@ class GroceryList extends StatefulWidget {
 }
 
 class _GroceryListState extends State<GroceryList> {
-
-  
-  void _addItem()  {
- 
-     Navigator.of(context).push<GroceryItem>(
+  Future<void> _addItem({GroceryItem? item, required FormMode mode}) async {
+    final newItem = await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (ctx) => const NewItem(),
+        builder: (ctx) => NewItem(
+          mode: mode,
+          
+        ),
       ),
     );
+    if (!context.mounted) return;
+    setState(() {
+      if (mode == FormMode.adding) {
+        dummyGroceryItems.add(newItem!);
+      } else if (mode == FormMode.editing) {
+        dummyGroceryItems[dummyGroceryItems
+            .indexWhere((item) => item.id == newItem!.id)] = newItem!;
+      }
+    });
   }
 
- 
   @override
   Widget build(BuildContext context) {
     Widget content = const Center(child: Text('No items added yet.'));
@@ -30,7 +48,12 @@ class _GroceryListState extends State<GroceryList> {
     if (dummyGroceryItems.isNotEmpty) {
       content = ListView.builder(
         itemCount: dummyGroceryItems.length,
-        itemBuilder: (ctx, index) => GroceryTile(dummyGroceryItems[index]),
+        itemBuilder: (ctx, index) => GroceryTile(
+          edit: (_) => _addItem(
+            mode: FormMode.editing,
+          ),
+          dummyGroceryItems[index],
+        ),
       );
     }
 
@@ -39,7 +62,7 @@ class _GroceryListState extends State<GroceryList> {
         title: const Text('Your Groceries'),
         actions: [
           IconButton(
-            onPressed:  _addItem,
+            onPressed: () => _addItem(mode: FormMode.adding),
             icon: const Icon(Icons.add),
           ),
         ],
@@ -50,13 +73,14 @@ class _GroceryListState extends State<GroceryList> {
 }
 
 class GroceryTile extends StatelessWidget {
-  const GroceryTile(this.groceryItem, {super.key});
-
+  const GroceryTile(this.groceryItem, {super.key, required this.edit});
+  final Function(FormMode mode) edit;
   final GroceryItem groceryItem;
-
+  // final Function onTap;
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: () => edit(FormMode.editing),
       title: Text(groceryItem.name),
       leading: Container(
         width: 24,

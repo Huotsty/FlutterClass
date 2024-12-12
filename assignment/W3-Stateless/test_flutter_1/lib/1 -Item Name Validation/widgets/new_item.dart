@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../models/grocery_category.dart';
+import 'package:test_flutter_1/1%20-Item%20Name%20Validation/models/grocery_category.dart';
+import 'package:test_flutter_1/1%20-Item%20Name%20Validation/models/grocery_item.dart';
+import 'package:test_flutter_1/1%20-Item%20Name%20Validation/widgets/grocery_list.dart';
 
 class NewItem extends StatefulWidget {
-  const NewItem({super.key});
+  const NewItem(
+      {super.key,
+      required this.mode,
+      
+      GroceryItem? item});
+
+  final FormMode mode;
+  
+  get item => ;
+
+  
 
   @override
   State<NewItem> createState() {
@@ -15,23 +27,39 @@ class _NewItemState extends State<NewItem> {
   // We create a key to access and control the state of the Form.
   final _formKey = GlobalKey<FormState>();
 
-  String _enteredName = '';
-  int _enteredQuantity = 0;
+  late GroceryCategory _selectedCategory;
+  late String _enteredName;
+  late int _enteredQuantity;
+
+  @override
+  initState() {
+    super.initState();
+    _selectedCategory = widget.item!.category ?? GroceryCategory.carbs;
+    _enteredName = widget.item?.name ?? '';
+    _enteredQuantity = widget.item?.quantity ?? 0;
+  }
 
   void _saveItem() {
     // 1 - Validate the form
     bool isValid = _formKey.currentState!.validate();
+
     if (isValid) {
       // 2 - Save the form to get last entered values
       _formKey.currentState!.save();
 
-      // TODO: Get the last entered quantity
-      print("Name $_enteredName\nQuantity $_enteredQuantity");
+      String newId = "";
+      GroceryItem newItem = GroceryItem(
+          id: newId,
+          name: _enteredName,
+          quantity: _enteredQuantity,
+          category: _selectedCategory);
+
+      Navigator.pop<GroceryItem>(context, newItem);
     }
   }
 
   void _resetForm() {
-    // TODO: reset the form
+    _formKey.currentState!.reset();
   }
 
   String? validateTitle(String? value) {
@@ -56,26 +84,11 @@ class _NewItemState extends State<NewItem> {
     return null;
   }
 
-  // String? validateQuantity(String? value) {
-  //   String errorMessage = '';
-  //   if (value == null || value.isEmpty) {
-  //     print('Hello');
-  //     errorMessage = 'Must be a valid';
-  //     if (int.tryParse(value!)! < 0) {
-  //       errorMessage = '$errorMessage, positive number';
-  //       return errorMessage;
-  //     } else {
-  //       return errorMessage;
-  //     }
-  //   }
-  //   return null;
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add a new item'),
+        title: Text(widget.mode.label),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
@@ -84,6 +97,7 @@ class _NewItemState extends State<NewItem> {
           child: Column(
             children: [
               TextFormField(
+                initialValue: _enteredName,
                 maxLength: 50,
                 decoration: const InputDecoration(
                   label: Text('Name'),
@@ -102,7 +116,7 @@ class _NewItemState extends State<NewItem> {
                       decoration: const InputDecoration(
                         label: Text('Quantity'),
                       ),
-                      initialValue: '1',
+                      initialValue: _enteredQuantity.toString(),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: validateQuantity,
                       onSaved: (value) => _enteredQuantity = int.parse(value!),
@@ -111,6 +125,7 @@ class _NewItemState extends State<NewItem> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: DropdownButtonFormField<GroceryCategory>(
+                      value: _selectedCategory,
                       items: [
                         for (final category in GroceryCategory.values)
                           DropdownMenuItem<GroceryCategory>(
@@ -128,7 +143,9 @@ class _NewItemState extends State<NewItem> {
                             ),
                           ),
                       ],
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        _selectedCategory = value!;
+                      },
                     ),
                   ),
                 ],
@@ -143,7 +160,7 @@ class _NewItemState extends State<NewItem> {
                   ),
                   ElevatedButton(
                     onPressed: _saveItem,
-                    child: const Text('Add Item'),
+                    child: Text(widget.mode.btnText),
                   )
                 ],
               ),
