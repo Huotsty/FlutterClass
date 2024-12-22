@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:test_flutter_1/1%20-Item%20Name%20Validation/models/grocery_category.dart';
-import 'package:test_flutter_1/1%20-Item%20Name%20Validation/models/grocery_item.dart';
-import 'package:test_flutter_1/1%20-Item%20Name%20Validation/widgets/grocery_list.dart';
-import 'package:uuid/uuid.dart';
+import 'package:test_flutter_1/testchallenge/widgets/grocery_list.dart';
+
+import '../models/grocery_category.dart';
+import '../models/grocery_item.dart';
 
 class NewItem extends StatefulWidget {
-  const NewItem({super.key, required this.mode, this.item});
-  final GroceryItem? item;
-  final FormMode mode;
+  const NewItem({super.key, required this.screenMode, this.inputGrocery});
+
+  final FormMode screenMode;
+  final GroceryItem? inputGrocery;
 
   @override
   State<NewItem> createState() {
@@ -20,56 +21,37 @@ class _NewItemState extends State<NewItem> {
   // We create a key to access and control the state of the Form.
   final _formKey = GlobalKey<FormState>();
 
-  late GroceryCategory _selectedCategory;
-  late String _enteredName;
-  late int _enteredQuantity;
-final uuid = const Uuid();
+  String _enteredName = '';
+
+  int _enteredQuantity = 0;
+
+  late GroceryCategory _enteredGroceryCategory;
+
+  GroceryItem? currentGroceryItem;
+
+  bool get validateNullGrocery => currentGroceryItem != null;
+
   @override
-  initState() {
+  void initState() {
     super.initState();
-    _selectedCategory = widget.item?.category ?? GroceryCategory.carbs;
-    _enteredName = widget.item?.name ?? '';
-    _enteredQuantity = widget.item?.quantity ?? 1;
+    currentGroceryItem = widget.inputGrocery;
   }
 
   void _saveItem() {
+
     // 1 - Validate the form
     bool isValid = _formKey.currentState!.validate();
-
     if (isValid) {
+      
       // 2 - Save the form to get last entered values
       _formKey.currentState!.save();
-
-      String newId = uuid.v4(); 
-      GroceryItem newItem = GroceryItem(
-          id: newId,
-          name: _enteredName,
-          quantity: _enteredQuantity,
-          category: _selectedCategory);
-
-      Navigator.pop<GroceryItem>(context, newItem);
+      Navigator.pop(context, GroceryItem(id: 'd', name: _enteredName, quantity: _enteredQuantity, category: _enteredGroceryCategory));
     }
-
-
-    final updatedItem = GroceryItem(
-    id: widget.item?.id ??  const Uuid().v4(), 
-    name: _enteredName,
-    quantity: _enteredQuantity,
-    category: _selectedCategory,
-  );
-
-  Navigator.of(context).pop(updatedItem);
   }
 
   void _resetForm() {
-    setState(() {
-      _enteredName = '';
-      _enteredQuantity = 1;
-      _selectedCategory = GroceryCategory.carbs;
-    });
-
-    _formKey.currentState!.reset();
-  }
+    _formKey.currentState?.reset();
+  } 
 
   String? validateTitle(String? value) {
     if (value == null ||
@@ -81,23 +63,37 @@ final uuid = const Uuid();
     return null;
   }
 
-  // TODO: validate quantity
+
   String? validateQuantity(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Quantity is required';
+      return "Must be valid"; 
     }
-    final quantity = int.tryParse(value);
-    if (quantity == null || quantity <= 0) {
-      return 'Please enter a valid, positive number';
+    
+    final parsedValue = int.tryParse(value);
+    if (parsedValue == null) {
+      return "Must be a valid number";
+    }
+
+    if (parsedValue < 0) {
+      return "Must be a positive number"; 
+    }
+
+    return null; // Input is valid.
+  }
+
+  String? validateCategory(GroceryCategory? value) {
+    if (value == null ) {
+      return "Must be valid category";
     }
     return null;
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.mode.label),
+        title: Text(widget.screenMode.formAppBarTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
@@ -106,8 +102,8 @@ final uuid = const Uuid();
           child: Column(
             children: [
               TextFormField(
-                initialValue: _enteredName,
                 maxLength: 50,
+                initialValue: validateNullGrocery ? currentGroceryItem!.name : "",
                 decoration: const InputDecoration(
                   label: Text('Name'),
                 ),
@@ -125,16 +121,20 @@ final uuid = const Uuid();
                       decoration: const InputDecoration(
                         label: Text('Quantity'),
                       ),
-                      initialValue: _enteredQuantity.toString(),
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      initialValue: validateNullGrocery ? currentGroceryItem!.quantity.toString() : '1',
                       validator: validateQuantity,
-                      onSaved: (value) => _enteredQuantity = int.parse(value!),
+                      onSaved: (value) {
+                        _enteredQuantity = int.parse(value!);
+                      },
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: DropdownButtonFormField<GroceryCategory>(
-                      value: _selectedCategory,
+                      value: validateNullGrocery ? currentGroceryItem!.category : null,
+                      validator: validateCategory,
+                      onSaved: (value) => _enteredGroceryCategory = value!,
                       items: [
                         for (final category in GroceryCategory.values)
                           DropdownMenuItem<GroceryCategory>(
@@ -152,9 +152,7 @@ final uuid = const Uuid();
                             ),
                           ),
                       ],
-                      onChanged: (value) {
-                        _selectedCategory = value!;
-                      },
+                      onChanged: (value) {},
                     ),
                   ),
                 ],
@@ -169,7 +167,7 @@ final uuid = const Uuid();
                   ),
                   ElevatedButton(
                     onPressed: _saveItem,
-                    child: Text(widget.mode.btnText),
+                    child: Text(widget.screenMode.formBtnTitle),
                   )
                 ],
               ),
