@@ -1,57 +1,92 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:test_flutter_1/testchallenge/widgets/grocery_list.dart';
+
+import 'package:uuid/uuid.dart';
 
 import '../models/grocery_category.dart';
 import '../models/grocery_item.dart';
 
-class NewItem extends StatefulWidget {
-  const NewItem({super.key, required this.screenMode, this.inputGrocery});
+enum OperationMode {
+  Editing,
+  Creating,
+}
 
-  final FormMode screenMode;
-  final GroceryItem? inputGrocery;
+class NewItem extends StatefulWidget {
+  final OperationMode mode;
+  const NewItem({super.key, required this.mode, this.item});
+  final GroceryItem? item;
 
   @override
   State<NewItem> createState() {
-    return _NewItemState(); 
+    return _NewItemState();
   }
 }
 
 class _NewItemState extends State<NewItem> {
   // We create a key to access and control the state of the Form.
   final _formKey = GlobalKey<FormState>();
-
-  String _enteredName = '';
-
-  int _enteredQuantity = 0;
-
-  late GroceryCategory _enteredGroceryCategory;
-
-  GroceryItem? currentGroceryItem;
-
-  bool get validateNullGrocery => currentGroceryItem != null;
+  late String _enteredName;
+  late GroceryCategory _selectedCategory;
+  late int _enterVal;
 
   @override
   void initState() {
     super.initState();
-    currentGroceryItem = widget.inputGrocery;
+
+    if (widget.mode == OperationMode.Editing) {
+      _enteredName = widget.item!.name;
+      _enterVal = widget.item!.quantity;
+      _selectedCategory = widget.item!.category;
+    } else {
+      _enteredName = '';
+      _enterVal = 0;
+      _selectedCategory = GroceryCategory.fruit;
+    }
   }
 
   void _saveItem() {
-
+    var uuid = Uuid();
     // 1 - Validate the form
     bool isValid = _formKey.currentState!.validate();
     if (isValid) {
-       
-      // 2 - Save the form to get last entered values
       _formKey.currentState!.save();
-      Navigator.pop(context, GroceryItem(id: 'd', name: _enteredName, quantity: _enteredQuantity, category: _enteredGroceryCategory));
+      GroceryItem newItem = GroceryItem(
+        id: uuid.v4(),
+        name: _enteredName,
+        quantity: _enterVal,
+        category: _selectedCategory,
+      );
+
+      Navigator.pop(context, newItem);
+      print(
+          "Name $_enteredName Quantity $_enterVal Category $_selectedCategory}");
+    }
+  }
+
+  void _editItem() {
+    bool isValid = _formKey.currentState!.validate();
+    if (isValid) {
+      _formKey.currentState!.save();
+      GroceryItem newItem = GroceryItem(
+        id: widget.item!.id,
+        name: _enteredName,
+        quantity: _enterVal,
+        category: _selectedCategory,
+      );
+
+      Navigator.pop(context, newItem);
+      print(
+          "Name $_enteredName Quantity $_enterVal Category $_selectedCategory}");
     }
   }
 
   void _resetForm() {
-    _formKey.currentState?.reset();
-  } 
+    _formKey.currentState!.reset();
+    setState(() {
+      _enteredName = '';
+      _selectedCategory = GroceryCategory.fruit;
+      _enterVal = 0;
+    });
+  }
 
   String? validateTitle(String? value) {
     if (value == null ||
@@ -63,37 +98,21 @@ class _NewItemState extends State<NewItem> {
     return null;
   }
 
-
   String? validateQuantity(String? value) {
-    if (value == null || value.isEmpty) {
-      return "Must be valid"; 
-    }
-    
-    final parsedValue = int.tryParse(value);
-    if (parsedValue == null) {
-      return "Must be a valid number";
-    }
-
-    if (parsedValue < 0) {
-      return "Must be a positive number"; 
-    }
-
-    return null; // Input is valid.
-  }
-
-  String? validateCategory(GroceryCategory? value) {
-    if (value == null ) {
-      return "Must be valid category";
+    _enterVal = int.tryParse(value!) ?? 0;
+    if (_enterVal <= 0) {
+      return 'Must be a valid, positive number.';
     }
     return null;
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.screenMode.formAppBarTitle),
+        title: Text(widget.mode == OperationMode.Creating
+            ? 'Add a new item'
+            : 'Edit Item'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
@@ -102,8 +121,8 @@ class _NewItemState extends State<NewItem> {
           child: Column(
             children: [
               TextFormField(
+                initialValue: _enteredName,
                 maxLength: 50,
-                initialValue: validateNullGrocery ? currentGroceryItem!.name : "",
                 decoration: const InputDecoration(
                   label: Text('Name'),
                 ),
@@ -121,20 +140,14 @@ class _NewItemState extends State<NewItem> {
                       decoration: const InputDecoration(
                         label: Text('Quantity'),
                       ),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      initialValue: validateNullGrocery ? currentGroceryItem!.quantity.toString() : '1',
                       validator: validateQuantity,
-                      onSaved: (value) {
-                        _enteredQuantity = int.parse(value!);
-                      },
+                      initialValue: _enterVal.toString(),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: DropdownButtonFormField<GroceryCategory>(
-                      value: validateNullGrocery ? currentGroceryItem!.category : null,
-                      validator: validateCategory,
-                      onSaved: (value) => _enteredGroceryCategory = value!,
+                      value: _selectedCategory,
                       items: [
                         for (final category in GroceryCategory.values)
                           DropdownMenuItem<GroceryCategory>(
@@ -152,7 +165,9 @@ class _NewItemState extends State<NewItem> {
                             ),
                           ),
                       ],
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        _selectedCategory = value!;
+                      },
                     ),
                   ),
                 ],
@@ -166,8 +181,12 @@ class _NewItemState extends State<NewItem> {
                     child: const Text('Reset'),
                   ),
                   ElevatedButton(
-                    onPressed: _saveItem,
-                    child: Text(widget.screenMode.formBtnTitle),
+                    onPressed: widget.mode == OperationMode.Creating
+                        ? _saveItem
+                        : _editItem,
+                    child: Text(widget.mode == OperationMode.Creating
+                        ? 'Add Item'
+                        : 'Edit Item'),
                   )
                 ],
               ),

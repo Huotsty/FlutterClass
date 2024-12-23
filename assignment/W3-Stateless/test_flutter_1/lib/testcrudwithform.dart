@@ -132,7 +132,7 @@
 //       _selectedCategory = widget.item!.category;
 //     }
 //   }
-
+ 
 //   @override
 //   Widget build(BuildContext context) {
 //     final isEditing = widget.mode == FormMode.editing;
@@ -147,26 +147,26 @@
 //               TextFormField(
 //                 controller: _titleController,
 //                 decoration: const InputDecoration(labelText: "Title"),
-//                 validator: (value) {
-//                   if (value == null || value.isEmpty) {
-//                     return "Please enter a title";
-//                   }
-//                   return null;
-//                 },
+                // validator: (value) {
+                //   if (value == null || value.isEmpty) {
+                //     return "Please enter a title";
+                //   }
+                //   return null;
+                // },
 //               ),
 //               TextFormField(
 //                 controller: _amountController,
 //                 decoration: const InputDecoration(labelText: "Amount"),
 //                 keyboardType: TextInputType.number,
-//                 validator: (value) {
-//                   if (value == null || value.isEmpty) {
-//                     return "Please enter an amount";
-//                   }
-//                   if (double.tryParse(value) == null) {
-//                     return "Please enter a valid number";
-//                   }
-//                   return null;
-//                 },
+                // validator: (value) {
+                //   if (value == null || value.isEmpty) {
+                //     return "Please enter an amount";
+                //   }
+                //   if (double.tryParse(value) == null) {
+                //     return "Please enter a valid number";
+                //   }
+                //   return null;
+                // },
 //               ),
 //               DropdownButtonFormField<Category>(
 //                 value: _selectedCategory,
@@ -195,21 +195,21 @@
 //               Row(
 //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
 //                 children: [
-//                   ElevatedButton(
-//                     onPressed: () {
-//                       if (_formKey.currentState!.validate()) {
-//                         Navigator.pop(
-//                           context,
-//                           Item(
-//                             title: _titleController.text,
-//                             amount: double.parse(_amountController.text),
-//                             category: _selectedCategory!,
-//                           ),
-//                         );
-//                       }
-//                     },
-//                     child: Text(isEditing ? "Save Changes" : "Add Item"),
-//                   ),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     if (_formKey.currentState!.validate()) {
+                  //       Navigator.pop(
+                  //         context,
+                  //         Item(
+                  //           title: _titleController.text,
+                  //           amount: double.parse(_amountController.text),
+                  //           category: _selectedCategory!,
+                  //         ),
+                  //       );
+                  //     }
+                  //   },
+                  //   child: Text(isEditing ? "Save Changes" : "Add Item"),
+                  // ),
 //                   ElevatedButton(
 //                     onPressed: () => Navigator.pop(context),
 //                     child: const Text("Cancel"),

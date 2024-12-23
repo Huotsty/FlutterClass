@@ -131,7 +131,7 @@ class _GroceryListState extends State<GroceryList> {
                   icon: const Icon(Icons.add),
                 ),
               ]
-            : [
+            : [ 
                 IconButton(
                   onPressed: removeItem,
                   icon: const Icon(Icons.delete),
